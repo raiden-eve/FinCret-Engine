@@ -57,22 +57,36 @@
 
     <button class="fixed bottom-8 right-8 bg-emerald-500 text-black font-bold py-4 px-8 rounded-full shadow-lg shadow-emerald-500/20 hover:scale-105 transition">+ New Project</button>
     <script>
-    const addBtn = document.querySelector('button'); // The + New Project button
-    
-    addBtn.addEventListener('click', () => {
-        const title = prompt("Enter Video Title (e.g., Why Gold is Rising):");
-        if (title) {
-            // This creates a new 'Card' in the Ideation column
-            const ideationCol = document.querySelector('.space-y-4'); 
-            const newCard = document.createElement('div');
-            newCard.className = "glass p-4 rounded-2xl hover:bg-white/5 transition";
-            newCard.innerHTML = `
-                <p class="text-sm font-medium">${title}</p>
-                <span class="text-[10px] text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded mt-2 inline-block">New Draft</span>
-            `;
-            ideationCol.appendChild(newCard);
-        }
-    });
+   // REPLACE THE SCRIPT TAG IN YOUR WORKSHOP.HTML WITH THIS:
+const ideationCol = document.querySelector('.space-y-4'); 
+
+// 1. LOAD PROJECTS ON START
+window.onload = () => {
+    const saved = JSON.parse(localStorage.getItem('fincret_projects') || '[]');
+    saved.forEach(title => renderProject(title));
+};
+
+function renderProject(title) {
+    const newCard = document.createElement('div');
+    newCard.className = "glass p-4 rounded-2xl hover:bg-white/5 transition cursor-pointer";
+    newCard.innerHTML = `
+        <p class="text-sm font-medium text-slate-200">${title}</p>
+        <span class="text-[10px] text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded mt-2 inline-block">Draft</span>
+    `;
+    // Add click to edit/delete in future
+    ideationCol.appendChild(newCard);
+}
+
+document.querySelector('button').onclick = () => {
+    const title = prompt("Video Title:");
+    if (title) {
+        renderProject(title);
+        // 2. SAVE TO LOCAL STORAGE
+        const saved = JSON.parse(localStorage.getItem('fincret_projects') || '[]');
+        saved.push(title);
+        localStorage.setItem('fincret_projects', JSON.stringify(saved));
+    }
+};
 </script>
 </body>
 </html>
