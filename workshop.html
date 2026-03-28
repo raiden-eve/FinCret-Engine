@@ -49,7 +49,29 @@
             }
         }
 
+        function loadProjects() {
+    const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
+    list.innerHTML = '';
+    saved.forEach((title, index) => {
+        const card = document.createElement('div');
+        card.className = "glass p-6 rounded-2xl relative group";
+        card.innerHTML = `
+            <p class='font-bold text-slate-200'>${title}</p>
+            <span class='text-xs text-slate-500 uppercase tracking-widest'>Project #${index + 1}</span>
+            <button onclick="deleteProject(${index})" class="absolute top-4 right-4 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition">✕</button>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function deleteProject(index) {
+    if(confirm("Delete this project?")) {
+        let saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
+        saved.splice(index, 1);
+        localStorage.setItem('fincret_data', JSON.stringify(saved));
         loadProjects();
+    }
+}
     </script>
 </body>
 </html>
