@@ -75,57 +75,58 @@
     </main>
 
     <script>
-        function smartAudit() {
-            const input = document.getElementById('scriptInput').value.toLowerCase();
-            const valDisplay = document.getElementById('scoreVal');
-            const ring = document.getElementById('scoreRing');
-            const feedback = document.getElementById('scoreFeedback');
-            
-            if (!input) {
-                alert("Please enter a script first!");
-                return;
-            }
+       // REPLACE THE SCRIPT TAG IN YOUR INDEX.HTML WITH THIS:
+function smartAudit() {
+    const input = document.getElementById('scriptInput').value.trim();
+    const inputLower = input.toLowerCase();
+    const valDisplay = document.getElementById('scoreVal');
+    const ring = document.getElementById('scoreRing');
+    const feedback = document.getElementById('scoreFeedback');
+    
+    if (input.length < 10) {
+        valDisplay.innerText = "12";
+        feedback.innerHTML = "<span class='text-red-400'>❌ Too Short.</span> Algorithms ignore low-effort content. Add more 'Hinglish' context.";
+        ring.style.borderColor = "#ef4444";
+        return;
+    }
 
-            // Logic Engine
-            let score = 45; // Baseline
-            
-            // March 2026 Hot Keywords
-            const hotTopics = ['gold', 'crash', 'iran', 'fii', 'ipo', 'nifty', 'trap', 'tax', 'oil'];
-            const genericTopics = ['save', 'budget', 'money', 'investing'];
+    let score = 30; // Base score for effort
+    
+    // MARCH 2026 ALPHA KEYWORDS
+    const highValue = ['gold', 'crash', 'iran', 'fii', 'bull trap', 'nifty', 'ipo', 'tax'];
+    const hooks = ['kya aapko pata hai', 'secret', 'lose money', 'exposed'];
 
-            // Calculate Score
-            hotTopics.forEach(topic => {
-                if (input.includes(topic)) score += 15;
-            });
+    highValue.forEach(word => { if(inputLower.includes(word)) score += 20; });
+    hooks.forEach(word => { if(inputLower.includes(word)) score += 10; });
 
-            genericTopics.forEach(topic => {
-                if (input.includes(topic)) score += 5;
-            });
+    if (score > 98) score = 98;
 
-            // Cap the score at 99
-            if (score > 99) score = 98;
+    valDisplay.innerText = score;
+    
+    if (score >= 75) {
+        ring.classList.add('score-glow');
+        ring.style.borderColor = "#10b981";
+        feedback.innerHTML = "<span class='text-emerald-400 font-bold'>🔥 Viral Potential!</span> High trend-match for March 2026.";
+    } else {
+        ring.classList.remove('score-glow');
+        ring.style.borderColor = "#3b82f6";
+        feedback.innerText = "📉 Average. Needs a 'Fear' hook or a specific March market event.";
+    }
+}
 
-            // Visual Updates
-            valDisplay.innerText = score;
-            
-            if (score >= 80) {
-                ring.classList.add('score-glow');
-                feedback.innerHTML = "<span class='text-emerald-400 font-bold'>🔥 High Viral Potential!</span> Matches March 2026 volatility trends.";
-            } else if (score >= 60) {
-                ring.classList.remove('score-glow');
-                ring.style.borderColor = "#3b82f6";
-                feedback.innerText = "📈 Solid topic. Try adding a specific 'Fear' hook for a 15% boost.";
-            } else {
-                ring.classList.remove('score-glow');
-                ring.style.borderColor = "#475569";
-                feedback.innerText = "⚠️ A bit generic. Connect this to the current Market Crash to gain traction.";
-            }
-        }
+// FIX: Heatmap Click + Rotation
+const trends = [
+    "🔥 Trending: #GoldCrash #IranCrisis +42%",
+    "📊 Niche: #SME_IPO Bull Traps +18%",
+    "🚀 Alpha: #FII_Outflow Strategies +30%"
+];
+let trendIdx = 0;
+setInterval(() => {
+    trendIdx = (trendIdx + 1) % trends.length;
+    document.querySelector('#heatmapTrigger p').innerText = trends[trendIdx];
+}, 5000); // Rotates every 5 seconds for testing (change to 4hr later)
 
-        // Heatmap Click Functionality
-        document.getElementById('heatmapTrigger').addEventListener('click', () => {
-            alert("📊 MARCH 28, 2026 INSIGHTS:\n\n1. Gold is peaking at ₹1.48L/10g.\n2. FIIs have pulled out ₹1.14L Crore this month.\n3. Content about 'Market Safety' is outperforming 'Growth' by 3x.");
-        });
+document.getElementById('heatmapTrigger').onclick = () => alert("MARCH 28: Market is fearful. Gold is the safe play.");
     </script>
 </body>
 </html>
