@@ -28,54 +28,52 @@
     <button onclick="addNewProject()" class="fixed bottom-8 right-8 bg-emerald-500 text-black font-bold py-4 px-8 rounded-full shadow-xl">+ New Project</button>
 
     <script>
-        const list = document.getElementById('projectList');
+const list = document.getElementById('projectList');
 
-        // LOAD FROM MEMORY
-        function loadProjects() {
-            const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
-            list.innerHTML = '';
-            saved.forEach(title => {
-                const card = document.createElement('div');
-                card.className = "glass p-6 rounded-2xl";
-                card.innerHTML = `<p class='font-bold'>${title}</p><span class='text-xs text-slate-500'>Draft</span>`;
-                list.appendChild(card);
-            });
-        }
-
-        // SAVE TO MEMORY
-        function addNewProject() {
-            const t = prompt("Project Title:");
-            if(t) {
-                const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
-                saved.push(t);
-                localStorage.setItem('fincret_data', JSON.stringify(saved));
-                loadProjects();
-            }
-        }
-
-        function loadProjects() {
+// 1. THE LOAD & RENDER ENGINE
+function loadProjects() {
     const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
-    list.innerHTML = '';
+    list.innerHTML = ''; // Clear the list first
+    
     saved.forEach((title, index) => {
         const card = document.createElement('div');
-        card.className = "glass p-6 rounded-2xl relative group";
+        card.className = "glass p-6 rounded-2xl relative group border border-white/5 hover:border-emerald-500/30 transition";
         card.innerHTML = `
             <p class='font-bold text-slate-200'>${title}</p>
-            <span class='text-xs text-slate-500 uppercase tracking-widest'>Project #${index + 1}</span>
-            <button onclick="deleteProject(${index})" class="absolute top-4 right-4 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition">✕</button>
+            <span class='text-[10px] text-slate-500 uppercase tracking-widest mt-2 block'>Project #${index + 1}</span>
+            
+            <button onclick="deleteProject(${index})" class="absolute top-4 right-4 text-slate-500 hover:text-red-400 transition text-sm">
+                ✕
+            </button>
         `;
         list.appendChild(card);
     });
 }
 
+// 2. THE DELETE LOGIC
 function deleteProject(index) {
-    if(confirm("Delete this project?")) {
+    // A quick confirmation so you don't delete by accident
+    if(confirm("Are you sure you want to delete this project?")) {
         let saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
-        saved.splice(index, 1);
+        saved.splice(index, 1); // Remove the item at that position
+        localStorage.setItem('fincret_data', JSON.stringify(saved)); // Save the new list
+        loadProjects(); // Refresh the screen
+    }
+}
+
+// 3. THE ADD LOGIC
+function addNewProject() {
+    const t = prompt("Enter Project Title (e.g., Gold Strategy 2026):");
+    if(t && t.trim().length > 0) {
+        const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
+        saved.push(t);
         localStorage.setItem('fincret_data', JSON.stringify(saved));
         loadProjects();
     }
 }
+
+// Start the engine
+loadProjects();
     </script>
 </body>
 </html>
