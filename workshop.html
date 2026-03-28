@@ -9,84 +9,47 @@
     <style>
         body { font-family: 'Space Grotesk', sans-serif; background: #020617; color: white; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .gradient-text { background: linear-gradient(90deg, #34d399, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="p-6 md:p-12">
-    <nav class="flex justify-between items-center mb-12">
-        <h1 class="text-2xl font-bold tracking-tighter"><a href="index.html">FIN<span class="gradient-text">CRET</span></a></h1>
-        <div class="flex gap-6 text-sm font-medium text-slate-400">
-            <a href="index.html" class="hover:text-emerald-400">Auditor</a>
-            <a href="workshop.html" class="text-emerald-400">Workshop</a>
-        </div>
+<body class="p-12">
+    <nav class="flex justify-between mb-12">
+        <h1 class="text-2xl font-bold"><a href="index.html">FIN<span class="text-emerald-400">CRET</span></a></h1>
+        <a href="index.html" class="text-slate-400">Back to Auditor</a>
     </nav>
 
-    <h2 class="text-3xl font-bold mb-8">Project <span class="gradient-text">Workshop</span></h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="space-y-4">
-            <h3 class="text-xs uppercase tracking-widest text-slate-500 font-bold px-2">💡 Ideation</h3>
-            <div class="glass p-4 rounded-2xl hover:bg-white/5 transition">
-                <p class="text-sm font-medium">SME IPO: Why Everyone is Panicking?</p>
-                <span class="text-[10px] text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded mt-2 inline-block">Trending</span>
-            </div>
+    <h2 class="text-3xl font-bold mb-8 text-emerald-400">Project Workshop</h2>
+    <div id="projectList" class="grid grid-cols-1 md:grid-cols-3 gap-6">
         </div>
 
-        <div class="space-y-4">
-            <h3 class="text-xs uppercase tracking-widest text-slate-500 font-bold px-2">🔍 Auditing</h3>
-            <div class="glass p-4 rounded-2xl border-l-2 border-blue-500">
-                <p class="text-sm font-medium">HDFC vs Airtel: The Nifty Rejig Explained</p>
-                <div class="flex justify-between items-center mt-3">
-                    <span class="text-[10px] text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">In Progress</span>
-                    <span class="text-xs text-slate-500 font-bold">Score: --</span>
-                </div>
-            </div>
-        </div>
+    <button onclick="addNewProject()" class="fixed bottom-8 right-8 bg-emerald-500 text-black font-bold py-4 px-8 rounded-full shadow-xl">+ New Project</button>
 
-        <div class="space-y-4">
-            <h3 class="text-xs uppercase tracking-widest text-slate-500 font-bold px-2">🎥 Ready to Film</h3>
-            <div class="glass p-4 rounded-2xl border-l-2 border-emerald-500">
-                <p class="text-sm font-medium">Indian Middle Class Tax Trap 2026</p>
-                <div class="flex justify-between items-center mt-3">
-                    <span class="text-[10px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded">Optimized</span>
-                    <span class="text-xs text-emerald-400 font-bold">Score: 92</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <button class="fixed bottom-8 right-8 bg-emerald-500 text-black font-bold py-4 px-8 rounded-full shadow-lg shadow-emerald-500/20 hover:scale-105 transition">+ New Project</button>
     <script>
-   // REPLACE THE SCRIPT TAG IN YOUR WORKSHOP.HTML WITH THIS:
-const ideationCol = document.querySelector('.space-y-4'); 
+        const list = document.getElementById('projectList');
 
-// 1. LOAD PROJECTS ON START
-window.onload = () => {
-    const saved = JSON.parse(localStorage.getItem('fincret_projects') || '[]');
-    saved.forEach(title => renderProject(title));
-};
+        // LOAD FROM MEMORY
+        function loadProjects() {
+            const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
+            list.innerHTML = '';
+            saved.forEach(title => {
+                const card = document.createElement('div');
+                card.className = "glass p-6 rounded-2xl";
+                card.innerHTML = `<p class='font-bold'>${title}</p><span class='text-xs text-slate-500'>Draft</span>`;
+                list.appendChild(card);
+            });
+        }
 
-function renderProject(title) {
-    const newCard = document.createElement('div');
-    newCard.className = "glass p-4 rounded-2xl hover:bg-white/5 transition cursor-pointer";
-    newCard.innerHTML = `
-        <p class="text-sm font-medium text-slate-200">${title}</p>
-        <span class="text-[10px] text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded mt-2 inline-block">Draft</span>
-    `;
-    // Add click to edit/delete in future
-    ideationCol.appendChild(newCard);
-}
+        // SAVE TO MEMORY
+        function addNewProject() {
+            const t = prompt("Project Title:");
+            if(t) {
+                const saved = JSON.parse(localStorage.getItem('fincret_data') || '[]');
+                saved.push(t);
+                localStorage.setItem('fincret_data', JSON.stringify(saved));
+                loadProjects();
+            }
+        }
 
-document.querySelector('button').onclick = () => {
-    const title = prompt("Video Title:");
-    if (title) {
-        renderProject(title);
-        // 2. SAVE TO LOCAL STORAGE
-        const saved = JSON.parse(localStorage.getItem('fincret_projects') || '[]');
-        saved.push(title);
-        localStorage.setItem('fincret_projects', JSON.stringify(saved));
-    }
-};
-</script>
+        loadProjects();
+    </script>
 </body>
 </html>
