@@ -9,124 +9,85 @@
     <style>
         body { font-family: 'Space Grotesk', sans-serif; background: #020617; color: white; overflow-x: hidden; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glow-green { box-shadow: 0 0 20px rgba(16, 185, 129, 0.1); }
         .gradient-text { background: linear-gradient(90deg, #34d399, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .score-glow { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); border-color: #10b981 !important; }
     </style>
 </head>
 <body class="p-6 md:p-12">
-    <div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-900/20 rounded-full blur-[120px] animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-900/20 rounded-full blur-[120px] animate-pulse"></div>
-    </div>
-
     <nav class="flex justify-between items-center mb-12">
-        <h1 class="text-2xl font-bold tracking-tighter">FIN<span class="gradient-text">CRET</span> <span class="text-xs font-light text-slate-500">v0.0</span></h1>
+        <h1 class="text-2xl font-bold tracking-tighter">FIN<span class="gradient-text">CRET</span></h1>
         <div class="flex gap-6 text-sm font-medium text-slate-400">
             <a href="index.html" class="text-emerald-400">Auditor</a>
             <a href="workshop.html" class="hover:text-emerald-400 transition">Workshop</a>
-            <a href="#" onclick="alert('Sentiment Analysis: March 2026 is seeing a shift toward Safe Haven assets like Gold and Silver.')" class="hover:text-emerald-400 transition">Analytics</a>
         </div>
     </nav>
 
     <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <div class="md:col-span-2 glass rounded-3xl p-8 glow-green relative overflow-hidden">
+        <div class="md:col-span-2 glass rounded-3xl p-8 relative overflow-hidden">
             <h2 class="text-xl font-bold mb-4">Launch New Audit</h2>
-            <p class="text-slate-400 text-sm mb-6">Enter your video title or script to test its viral probability against current 2026 trends.</p>
-            
-            <textarea id="scriptInput" class="w-full h-40 bg-white/5 border border-white/10 rounded-2xl p-4 focus:outline-none focus:border-emerald-500/50 transition resize-none text-slate-200" placeholder="E.g., 'Is Gold a Bull Trap in 2026?'"></textarea>
-            
-            <div class="flex justify-between items-center mt-6">
-                <button onclick="smartAudit()" class="bg-emerald-500 hover:bg-emerald-400 text-black font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 active:scale-95">Analyze Script</button>
-                <div class="text-right">
-                    <span class="text-xs text-slate-500 block">REAL-TIME CONTEXT</span>
-                    <span class="text-emerald-400 font-bold text-xs">March 28, 2026</span>
-                </div>
-            </div>
+            <textarea id="scriptInput" class="w-full h-40 bg-white/5 border border-white/10 rounded-2xl p-4 text-slate-200" placeholder="E.g., Why Gold is hitting ₹1.5L..."></textarea>
+            <button onclick="runStrictAudit()" class="mt-6 bg-emerald-500 text-black font-bold py-3 px-8 rounded-full">Analyze Script</button>
         </div>
 
         <div class="glass rounded-3xl p-8 flex flex-col items-center justify-center text-center">
-            <h3 class="text-sm text-slate-500 uppercase tracking-widest mb-4">Viral Score</h3>
-            <div id="scoreRing" class="w-40 h-40 rounded-full border-8 border-slate-800 flex items-center justify-center relative transition-all duration-500">
+            <div id="scoreRing" class="w-40 h-40 rounded-full border-8 border-slate-800 flex items-center justify-center transition-all duration-500">
                 <span id="scoreVal" class="text-5xl font-bold">0</span>
             </div>
-            <p id="scoreFeedback" class="mt-6 text-sm text-slate-400 italic">"Waiting for market analysis..."</p>
+            <p id="scoreFeedback" class="mt-6 text-sm text-slate-400 italic">"Waiting for input..."</p>
         </div>
 
-        <a href="workshop.html" class="glass rounded-3xl p-6 hover:bg-white/5 transition cursor-pointer group">
-            <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-500/40 transition">📁</div>
-            <h4 class="font-bold">The Workshop</h4>
-            <p class="text-xs text-slate-500 mt-2">Manage your script drafts and Kanban board.</p>
-        </a>
-
-        <div id="heatmapTrigger" class="glass rounded-3xl p-6 hover:bg-white/5 transition cursor-pointer group">
-            <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-orange-500/40 transition">🔥</div>
+        <div id="heatmapCard" class="glass rounded-3xl p-6 cursor-pointer border border-orange-500/30">
+            <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center mb-4">🔥</div>
             <h4 class="font-bold">Niche Heatmap</h4>
-            <p class="text-xs text-slate-500 mt-2">Trending: #GoldCrash #IranCrisis +42%</p>
+            <p id="heatmapText" class="text-xs text-slate-400 mt-2">Loading trends...</p>
         </div>
 
-        <div class="glass rounded-3xl p-6 hover:bg-white/5 transition cursor-pointer group">
-            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:bg-purple-500/40 transition">👤</div>
-            <h4 class="font-bold">Audience Gap</h4>
-            <p class="text-xs text-slate-500 mt-2">View what your competitors are missing today.</p>
+        <div id="shadowCard" class="glass rounded-3xl p-6 border border-purple-500/30">
+            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">👤</div>
+            <h4 class="font-bold">Shadow Gap</h4>
+            <p id="shadowText" class="text-xs text-slate-400 mt-2">Analyzing gaps...</p>
         </div>
-
     </main>
 
     <script>
-       // REPLACE THE SCRIPT TAG IN YOUR INDEX.HTML WITH THIS:
-function smartAudit() {
-    const input = document.getElementById('scriptInput').value.trim();
-    const inputLower = input.toLowerCase();
-    const valDisplay = document.getElementById('scoreVal');
-    const ring = document.getElementById('scoreRing');
-    const feedback = document.getElementById('scoreFeedback');
-    
-    if (input.length < 10) {
-        valDisplay.innerText = "12";
-        feedback.innerHTML = "<span class='text-red-400'>❌ Too Short.</span> Algorithms ignore low-effort content. Add more 'Hinglish' context.";
-        ring.style.borderColor = "#ef4444";
-        return;
-    }
+        // 1. DETERMINISTIC AUDIT (No Randomness)
+        function runStrictAudit() {
+            const text = document.getElementById('scriptInput').value.trim().toLowerCase();
+            const val = document.getElementById('scoreVal');
+            const feedback = document.getElementById('scoreFeedback');
+            const ring = document.getElementById('scoreRing');
 
-    let score = 30; // Base score for effort
-    
-    // MARCH 2026 ALPHA KEYWORDS
-    const highValue = ['gold', 'crash', 'iran', 'fii', 'bull trap', 'nifty', 'ipo', 'tax'];
-    const hooks = ['kya aapko pata hai', 'secret', 'lose money', 'exposed'];
+            if (text.length < 15) {
+                val.innerText = "08";
+                feedback.innerText = "❌ Content too short for algorithm pick-up.";
+                ring.style.borderColor = "#ef4444";
+                return;
+            }
 
-    highValue.forEach(word => { if(inputLower.includes(word)) score += 20; });
-    hooks.forEach(word => { if(inputLower.includes(word)) score += 10; });
+            let score = 20; // Base effort
+            if (text.includes("gold") || text.includes("silver")) score += 35;
+            if (text.includes("crash") || text.includes("iran") || text.includes("war")) score += 30;
+            if (text.includes("fii") || text.includes("nifty")) score += 15;
 
-    if (score > 98) score = 98;
+            score = Math.min(score, 99);
+            val.innerText = score;
+            ring.style.borderColor = score > 70 ? "#10b981" : "#3b82f6";
+            feedback.innerText = score > 70 ? "🔥 High Trend Match!" : "📉 Add March 2026 keywords.";
+        }
 
-    valDisplay.innerText = score;
-    
-    if (score >= 75) {
-        ring.classList.add('score-glow');
-        ring.style.borderColor = "#10b981";
-        feedback.innerHTML = "<span class='text-emerald-400 font-bold'>🔥 Viral Potential!</span> High trend-match for March 2026.";
-    } else {
-        ring.classList.remove('score-glow');
-        ring.style.borderColor = "#3b82f6";
-        feedback.innerText = "📉 Average. Needs a 'Fear' hook or a specific March market event.";
-    }
-}
+        // 2. ROTATION LOGIC
+        const trends = ["#GoldCrash +42%", "#SME_IPO_Bubble +18%", "#IranOilSpike +30%"];
+        const gaps = ["Akshat fans want Real Estate", "Tax-saving for Gen Z", "Rural Fintech Needs"];
+        let idx = 0;
 
-// FIX: Heatmap Click + Rotation
-const trends = [
-    "🔥 Trending: #GoldCrash #IranCrisis +42%",
-    "📊 Niche: #SME_IPO Bull Traps +18%",
-    "🚀 Alpha: #FII_Outflow Strategies +30%"
-];
-let trendIdx = 0;
-setInterval(() => {
-    trendIdx = (trendIdx + 1) % trends.length;
-    document.querySelector('#heatmapTrigger p').innerText = trends[trendIdx];
-}, 5000); // Rotates every 5 seconds for testing (change to 4hr later)
+        setInterval(() => {
+            idx = (idx + 1) % 3;
+            document.getElementById('heatmapText').innerText = trends[idx];
+            document.getElementById('shadowText').innerText = gaps[idx];
+        }, 4000);
 
-document.getElementById('heatmapTrigger').onclick = () => alert("MARCH 28: Market is fearful. Gold is the safe play.");
+        // 3. HEATMAP CLICK
+        document.getElementById('heatmapCard').onclick = () => alert("MARCH 2026: Gold is at ₹14,809/g. Market is in Fear mode.");
     </script>
 </body>
 </html>
